@@ -49,7 +49,7 @@ blackListedTokenSchema.statics.isTokenBlacklisted = async function (token) {
 blackListedTokenSchema.statics.addToBlacklist = async function (token, userId, reason, expiresAt) {
     const blacklistedToken = await this.create({
         token,
-        userId,
+        userId: new mongoose.Types.ObjectId(userId),
         reason,
         expiresAt
     });

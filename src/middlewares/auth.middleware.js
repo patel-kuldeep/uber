@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
+import BlackListedToken from "../models/blackListedToken.model.js";
 
 // Verify JWT Token
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = async (req, res, next) => {
     try {
         const token = req.headers.authorization?.split(" ")[1] || req.cookies.token;
 
@@ -11,10 +12,20 @@ export const authenticateToken = (req, res, next) => {
                 message: "No token provided, authorization denied"
             });
         }
+
+        const tokenBlacklist = await BlackListedToken.isTokenBlacklisted(token);
+        if (tokenBlacklist) {
+            return res.status(401).json({
+                success: false,
+                message: "Token has been blacklisted, please log in again"
+            });
+        }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (error) {
+        console.log('error: ', error);
         return res.status(403).json({
             success: false,
             message: "Invalid or expired token"

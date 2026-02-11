@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+import BlackListedToken from "../models/blackListedToken.model.js";
 import UserModal from "../models/user.model.js";
 import userService from "../services/user.service.js";
 import { validationResult } from "express-validator";
@@ -232,6 +234,39 @@ export const deleteUser = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: error.message || "Error deleting user"
+        });
+    }
+};
+
+
+export const logoutUser = async (req, res) => {
+    try {
+        const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                message: "No token provided"
+            });
+        }
+        const userId = new mongoose.Types.ObjectId(req.user._id);
+        console.log('userId: ', userId);
+
+        await BlackListedToken.addToBlacklist(token, userId, "logout", new Date(Date.now() + 30 * 60 * 1000)); // Blacklist token for 30 minutes
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict"
+        });
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully"
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Error logging out"
         });
     }
 };

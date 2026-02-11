@@ -5,7 +5,8 @@ import {
     loginUser,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    logoutUser
 } from "../controllers/user.controller.js";
 import { authenticateToken, authorizeRole } from "../middlewares/auth.middleware.js";
 import { body } from "express-validator";
@@ -31,5 +32,10 @@ router.put('/:id', authenticateToken, updateUser);
 
 // Delete user (Protected route - admin only)
 router.delete('/:id', authenticateToken, authorizeRole('admin'), deleteUser);
+
+// Logout user (Protected route)
+router.post('/logout', authenticateToken, logoutUser)
+
+
 
 export default router;
