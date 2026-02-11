@@ -55,3 +55,24 @@ export const registerCaptain = async (req, res) => {
     }
 };
 
+// login captain
+
+export const loginCaptain = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const result = await captainService.loginCaptain(email, password);
+
+        return res.json({
+            success: true,
+            message: "Captain logged in successfully",
+            token: result.token,
+            captain: result.captain
+        });
+    } catch (error) {
+        console.error("Login Captain Error:", error);
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.message || "Server error while logging in captain"
+        });
+    }
+};

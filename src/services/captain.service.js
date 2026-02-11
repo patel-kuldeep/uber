@@ -63,6 +63,39 @@ export const registerCaptain = async (data) => {
     };
 };
 
+export const loginCaptain = async (email, password) => {
+
+    const captain = await Captain.findOne({ email }).select("+password");
+
+    if (!captain) {
+        const error = new Error("Invalid email or password");
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const isPasswordValid = await captain.comparePassword(password);
+    if (!isPasswordValid) {
+        const error = new Error("Invalid email or password");
+        error.statusCode = 401;
+        throw error;
+    }
+
+    // 🔥 IMPORTANT — fetch real mongoose document
+    const captainDoc = await Captain.findById(captain._id);
+
+    // -------- Generate Token --------
+    const token = captainDoc.generateAuthToken();
+
+    // remove password
+    const safeCaptain = await Captain.findById(captain._id).select("-password");
+
+    return {
+        token,
+        captain: safeCaptain
+    };
+};
+
 export default {
-    registerCaptain
+    registerCaptain,
+    loginCaptain
 };

@@ -136,6 +136,11 @@ captainSchema.methods.generateAuthToken = function () {
     );
 };
 
+// 🔒 Method to compare password
+captainSchema.methods.comparePassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
 
 captainSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
