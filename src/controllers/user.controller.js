@@ -216,7 +216,7 @@ export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const user = await User.findByIdAndDelete(id);
+        const user = await UserModal.findByIdAndDelete(id);
         if (!user) {
             return res.status(404).json({
                 success: false,

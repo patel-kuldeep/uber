@@ -119,6 +119,14 @@ const captainSchema = new mongoose.Schema(
         },
         socketId: {
             type: String,
+        },
+        role: {
+            type: String,
+            enum: {
+                values: ["captain"],
+                message: "Role must be captain"
+            },
+            default: "captain"
         }
     },
     { timestamps: true }
@@ -129,7 +137,7 @@ captainSchema.methods.generateAuthToken = function () {
         {
             _id: this._id,
             email: this.email,
-            role: "driver"
+            role: "captain"
         },
         process.env.JWT_SECRET,
         { expiresIn: "24h" }
