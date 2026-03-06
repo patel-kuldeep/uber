@@ -25,6 +25,7 @@ export const getAllUsers = async (req, res) => {
 
 // REGISTER USER
 export const registerUser = async (req, res, next) => {
+    console.log('req, res: ', req, res);
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -62,7 +63,7 @@ export const registerUser = async (req, res, next) => {
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            data: newUser,
+            user: newUser,
             token
         });
 
