@@ -93,6 +93,7 @@ export const loginUser = async (req, res) => {
 
         // Find user and include password field
         const user = await UserModal.findOne({ email }).select("+password");
+        console.log('user: ', user);
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -121,8 +122,8 @@ export const loginUser = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "User logged in successfully",
-            data: user,
+            message: `${user?.fullName?.firstName} ${user?.fullName?.lastName} logged in successfully`,
+            user,
             token
         });
 
